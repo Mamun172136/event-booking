@@ -10,13 +10,13 @@ Before you begin, make sure that you have Go installed on your machine.
    Download and install Go from the official website: [Go Downloads](https://golang.org/dl/)
 
 2. **Verify Go installation**:  
-   After installing Go, verify the installation by running the following command in your terminal:
+   After installing Go, verify the installation by running the following command in your terminal and make sure that you have **Go 1.23.4** (or a compatible version) installed on your machine.:
 
    ```bash
    go version
-   go version go1.23.4 windows/amd64
    git clone <https://github.com/Mamun172136/event-booking.git>
    cd <project-directory>
+   go get -u
    go run .
 
 
