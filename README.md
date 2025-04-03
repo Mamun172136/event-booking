@@ -15,11 +15,9 @@ Before you begin, make sure that you have Go installed on your machine.
    ```bash
    go version
    go version go1.23.4 windows/amd64
-
-git clone <repository-url>
-cd <project-directory>
-
-go run .
+   git clone <https://github.com/Mamun172136/event-booking.git>
+   cd <project-directory>
+   go run .
 
 
 # API Endpoints
