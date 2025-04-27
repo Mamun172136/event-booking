@@ -25,7 +25,8 @@ Before you begin, make sure that you have Go installed on your machine.
 ## Authentication
 
 - **POST /signup**: Register a new user.
-``` payload {"email":"test@example.com",
+``` payload {
+"email":"test@example.com",
   "password":"test"
 }
 - **POST /login**: Authenticate a user and get a token.
