@@ -25,8 +25,9 @@ Before you begin, make sure that you have Go installed on your machine.
 ## Authentication
 
 - **POST /signup**: Register a new user.
-- payload {"email":"test@example.com",
-- "password":"test"}
+``` payload {"email":"test@example.com",
+  "password":"test"
+}
 - **POST /login**: Authenticate a user and get a token.
 
 ## Events
@@ -35,7 +36,7 @@ Before you begin, make sure that you have Go installed on your machine.
 - **GET /events/:id**: Retrieve details of a specific event.
 - **POST /events**: Update details of a specific event.
 - authorization: ""
-- payload {
+``` payload {
   "name": " test event",
   "descripton": "A test event",
   "location": "Test location ",
@@ -43,7 +44,7 @@ Before you begin, make sure that you have Go installed on your machine.
   }
 - **PUT /events/:id**: Modify an existing event.
 -  authorization: ""
- -payload {
+ ``` payload {
   "name": "updatd test event",
   "descripton": "A test event",
   "location": "Test location updated",
