@@ -21,15 +21,20 @@ Before you begin, make sure that you have Go installed on your machine.
 
 
 # API Endpoints
-- **http://localhost:8080
+- **http://localhost:5000
 ## Authentication
 
 - **POST /signup**: Register a new user.
-``` payload {
+``` payload
+{
 "email":"test@example.com",
   "password":"test"
 }
 - **POST /login**: Authenticate a user and get a token.
+{
+"email":"test@example.com",
+  "password":"test"
+}
 
 ## Events
 
@@ -37,20 +42,20 @@ Before you begin, make sure that you have Go installed on your machine.
 - **GET /events/:id**: Retrieve details of a specific event.
 - **POST /events**: Update details of a specific event.
 - authorization: ""
-``` payload {
-  "name": " test event",
-  "descripton": "A test event",
-  "location": "Test location ",
-  "dateTime": "2025-04-21T15:30:00z"
-  }
+payload {
+  "name": "Test Event",
+  "description": "A test event",
+  "location": "Test Location",
+  "dateTime": "2025-04-21T15:30:00Z"  // Note uppercase Z
+}
 - **PUT /events/:id**: Modify an existing event.
 -  authorization: ""
- ``` payload {
-  "name": "updatd test event",
-  "descripton": "A test event",
-  "location": "Test location updated",
-  "dateTime": "2025-04-21T15:30:00z"
-  }
+  payload {
+  "name": "update Test Event",
+  "description": "A test event",
+  "location": "Test Location",
+  "dateTime": "2025-04-21T15:30:00Z"  // Note uppercase Z
+}
 - **DELETE /events/:id**: Delete a specific event.
 -  authorization: ""
 
