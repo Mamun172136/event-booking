@@ -6,6 +6,13 @@ import (
 )
 
 func RegisterRoutes(server *gin.Engine) {
+
+	server.GET("/", func(c *gin.Context) {
+        c.JSON(200, gin.H{
+            "message": "Welcome to the Event Booking API",
+        
+        })
+    })
 	server.GET("/events",getEvents)
 	server.GET("/events/:id",getEvent)
 

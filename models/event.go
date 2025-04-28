@@ -1,38 +1,45 @@
 package models
 
 import (
+	"fmt"
 	"time"
 
 	"example.com/db"
 )
 
 type Event struct {
-	ID          int64
-	Name        string 		`binding:"required"`
-	Description string		`binding:"required"`
-	Location    string		`binding:"required"`
-	DateTime    time.Time	`binding:"required"`
-	UserID      int64
+    ID          int64     `json:"id"`
+    Name        string    `json:"name" binding:"required"`
+    Description string    `json:"description" binding:"required"`
+    Location    string    `json:"location" binding:"required"`
+    DateTime    time.Time `json:"dateTime" binding:"required" time_format:"2006-01-02T15:04:05Z07:00"`
+    UserID      int64     `json:"userId"`
 }
 
 var events = []Event{}
 
-func (e *Event) Save() error{
-	query := `INSERT INTO events(name, description, location, dateTime, user_id)
-	VALUES(?,?,?,?,?)`
-	stmt,err:=db.DB.Prepare(query)
-	if err != nil{
-		return err
-	}
-	defer stmt.Close()
-	result,err := stmt.Exec(e.Name, e.Description, e.Location, e.DateTime, e.UserID)
-	if err != nil {
-		return err
-	}
-	id,err:=result.LastInsertId()
-	e.ID = id
-	// events = append(events, e)
-	return err
+func (e *Event) Save() error {
+    query := `INSERT INTO events(name, description, location, dateTime, user_id)
+              VALUES(?, ?, ?, ?, ?)`
+    
+    result, err := db.DB.Exec(query, 
+        e.Name,
+        e.Description,
+        e.Location,
+        e.DateTime, // SQL driver will handle time conversion
+        e.UserID,
+    )
+    if err != nil {
+        return fmt.Errorf("database error: %w", err)
+    }
+
+    id, err := result.LastInsertId()
+    if err != nil {
+        return fmt.Errorf("failed to get last insert ID: %w", err)
+    }
+    
+    e.ID = id
+    return nil
 }
 
 func GetAllEvents() ([]Event,error){
@@ -72,48 +79,105 @@ func GetEventById(id int64) (*Event, error){
 	return &event, nil
 }
 
-func (event Event)Update()error{
-	query :=`
-	UPDATE events
-	SET name=?, description=?, location=?, dateTime=?, 
-	WHERE id=?
-	`
-	stmt, err:= db.DB.Prepare(query)
+// func (event Event)Update()error{
+// 	query :=`
+// 	UPDATE events
+// 	SET name=?, description=?, location=?, dateTime=?, 
+// 	WHERE id=?
+// 	`
+// 	stmt, err:= db.DB.Prepare(query)
 
-	if err != nil{
-		return err
-	}
+// 	if err != nil{
+// 		return err
+// 	}
 
-	defer stmt.Close()
-	_,err =stmt.Exec(event.Name, event.Description, event.Location, event.DateTime, event.ID)
-	return err
+// 	defer stmt.Close()
+// 	_,err =stmt.Exec(event.Name, event.Description, event.Location, event.DateTime, event.ID)
+// 	return err
+// }
+
+func (event *Event) Update() error {
+    query := `
+    UPDATE events 
+    SET name = ?, description = ?, location = ?, dateTime = ?
+    WHERE id = ?
+    `
+    
+    result, err := db.DB.Exec(query,
+        event.Name,
+        event.Description,
+        event.Location,
+        event.DateTime,
+        event.ID,
+    )
+    
+    if err != nil {
+        return fmt.Errorf("database error: %w", err)
+    }
+
+    rowsAffected, err := result.RowsAffected()
+    if err != nil {
+        return fmt.Errorf("failed to check rows affected: %w", err)
+    }
+
+    if rowsAffected == 0 {
+        return fmt.Errorf("no rows were updated")
+    }
+
+    return nil
 }
 
-func (event Event)Delete()error{
-	query := "DELETE FROM events WHERE ID =?"
-	stmt , err :=db.DB.Prepare(query)
+// func (event Event)Delete()error{
+// 	query := "DELETE FROM events WHERE ID =?"
+// 	stmt , err :=db.DB.Prepare(query)
 
-	if err != nil{
-		return err
-	}
+// 	if err != nil{
+// 		return err
+// 	}
 
-	defer stmt.Close()
+// 	defer stmt.Close()
 
-	_,err = stmt.Exec(event.ID)
-	return err
+// 	_,err = stmt.Exec(event.ID)
+// 	return err
+// }
+
+func (event *Event) Delete() error {
+    result, err := db.DB.Exec("DELETE FROM events WHERE id = ?", event.ID)
+    if err != nil {
+        return err
+    }
+
+    rowsAffected, err := result.RowsAffected()
+    if err != nil {
+        return err
+    }
+
+    if rowsAffected == 0 {
+        return fmt.Errorf("no rows deleted")
+    }
+
+    return nil
 }
 
-func (e Event) Register(userId int64)error{
-	query := "INSERT INTO  registrations(event_id, user_id) VALUES (?,?)"
-	stmt, err := db.DB.Prepare(query)
+// func (e Event) Register(userId int64)error{
+// 	query := "INSERT INTO  registrations(event_id, user_id) VALUES (?,?)"
+// 	stmt, err := db.DB.Prepare(query)
 
-	if err != nil {
-		return err
-	}
+// 	if err != nil {
+// 		return err
+// 	}
 
-	defer stmt.Close()
+// 	defer stmt.Close()
 
-	_, err = stmt.Exec(e.ID, userId)
+// 	_, err = stmt.Exec(e.ID, userId)
 
-	return err
+// 	return err
+// }
+
+func (e *Event) Register(userId int64) error {
+    _, err := db.DB.Exec(
+        "INSERT INTO registrations(event_id, user_id) VALUES (?, ?)", 
+        e.ID, userId,
+    )
+    return err
 }
